@@ -1,0 +1,27 @@
+{
+  "name": "whisperforge",
+  "version": "1.0.0",
+  "description": "Self-hosted transcription pipeline using Whisper, Ollama, and local automation",
+  "private": true,
+  "main": "db-tracker.js",
+  "scripts": {
+    "dashboard": "node dashboard.js",
+    "stats": "node db-tracker.js stats",
+    "pending": "node db-tracker.js pending",
+    "quickstart": "bash quickstart.sh"
+  },
+  "keywords": [
+    "whisper",
+    "transcription",
+    "ollama",
+    "automation",
+    "self-hosted",
+    "n8n"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.58.0",
+    "dotenv": "^16.6.1"
+  }
+}

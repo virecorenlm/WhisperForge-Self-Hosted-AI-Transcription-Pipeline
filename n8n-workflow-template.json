@@ -1,0 +1,119 @@
+{
+  "name": "WhisperForge Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "/mnt/whisperforge/intake/",
+        "event": "file_added"
+      },
+      "name": "File Drop Trigger",
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "command": "node /path/to/project/db-tracker.js create-job '{{ $json.fileName }}' '{{ $json.path }}'"
+      },
+      "name": "Create Database Job",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "command": "mv '{{ $json.path }}' /mnt/whisperforge/processing/"
+      },
+      "name": "Move to Processing",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "python3 /home/user/scripts/whisper_batch.py '/mnt/whisperforge/processing/{{ $json.fileName }}' '/mnt/whisperforge/transcripts/{{ $json.fileName }}.txt'",
+        "host": "LLM_MACHINE_IP",
+        "user": "your_user"
+      },
+      "name": "SSH: Run Whisper",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "command": "node /path/to/project/db-tracker.js update-status '{{ $('Create Database Job').item.json.id }}' processing"
+      },
+      "name": "Mark Processing",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "python3 /home/user/scripts/llm_refine.py '/mnt/whisperforge/transcripts/{{ $json.fileName }}.txt' '/mnt/whisperforge/refined/{{ $json.fileName }}.txt'",
+        "host": "LLM_MACHINE_IP",
+        "user": "your_user"
+      },
+      "name": "SSH: LLM Refinement",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "command": "node /path/to/project/db-tracker.js save-transcript '{{ $('Create Database Job').item.json.id }}' '/mnt/whisperforge/refined/{{ $json.fileName }}.txt'"
+      },
+      "name": "Save Transcript to DB",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "command": "node /path/to/project/db-tracker.js update-status '{{ $('Create Database Job').item.json.id }}' completed"
+      },
+      "name": "Mark Completed",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1650, 300]
+    },
+    {
+      "parameters": {
+        "command": "mv '/mnt/whisperforge/processing/{{ $json.fileName }}' /mnt/whisperforge/archive/"
+      },
+      "name": "Archive Original",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1850, 300]
+    }
+  ],
+  "connections": {
+    "File Drop Trigger": {
+      "main": [[{"node": "Create Database Job", "type": "main", "index": 0}]]
+    },
+    "Create Database Job": {
+      "main": [[{"node": "Move to Processing", "type": "main", "index": 0}]]
+    },
+    "Move to Processing": {
+      "main": [[{"node": "SSH: Run Whisper", "type": "main", "index": 0}]]
+    },
+    "SSH: Run Whisper": {
+      "main": [[{"node": "Mark Processing", "type": "main", "index": 0}]]
+    },
+    "Mark Processing": {
+      "main": [[{"node": "SSH: LLM Refinement", "type": "main", "index": 0}]]
+    },
+    "SSH: LLM Refinement": {
+      "main": [[{"node": "Save Transcript to DB", "type": "main", "index": 0}]]
+    },
+    "Save Transcript to DB": {
+      "main": [[{"node": "Mark Completed", "type": "main", "index": 0}]]
+    },
+    "Mark Completed": {
+      "main": [[{"node": "Archive Original", "type": "main", "index": 0}]]
+    }
+  }
+}
