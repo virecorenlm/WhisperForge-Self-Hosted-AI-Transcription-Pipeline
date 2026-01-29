@@ -1,4 +1,4 @@
-# 🎙️ WhisperForge: Self-Hosted Transcription Pipeline
+# 🎙️ WhisperForge: Self-Hosted AI Transcription Pipeline
 
 **An autonomous document processing empire running on your home servers.**
 
