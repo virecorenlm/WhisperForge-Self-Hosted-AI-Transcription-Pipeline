@@ -33,7 +33,7 @@ node db-tracker.js update-status <job-id> processing
 node db-tracker.js save-transcript <job-id> /path/to/transcript.txt
 ```
 
-### Manual Transcription (on HP M01-F3003W)
+### Manual Transcription (on Compute Server)
 ```bash
 # Basic transcription
 python3 ~/scripts/whisper_batch.py input.mp3 output.txt
@@ -45,7 +45,7 @@ python3 ~/scripts/whisper_batch.py input.mp3 output.txt small.en
 python3 ~/scripts/whisper_batch.py input.mp3 output.txt medium.en --timestamps
 ```
 
-### Manual LLM Processing (on HP M01-F3003W)
+### Manual LLM Processing (on Compute Server)
 ```bash
 # Refine transcript
 python3 ~/scripts/llm_refine.py raw.txt refined.txt
@@ -68,8 +68,8 @@ python3 ~/scripts/llm_refine.py --batch /path/to/transcripts/
 | `/mnt/whisperforge/transcripts/` | Raw Whisper output |
 | `/mnt/whisperforge/refined/` | LLM-enhanced transcripts |
 | `/mnt/whisperforge/archive/` | Completed original files |
-| `~/whisperforge/` | Project scripts (HP Pavilion) |
-| `~/scripts/` | Python scripts (HP M01-F3003W) |
+| `~/whisperforge/` | Project scripts (Orchestration Server) |
+| `~/scripts/` | Python scripts (Compute Server) |
 
 ---
 
@@ -220,22 +220,22 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
 
 | Service | URL | Purpose |
 |---------|-----|---------|
-| n8n | http://pavilion-ip:5678 | Workflow management |
+| n8n | http://orchestration-server-ip:5678 | Workflow management |
 | Supabase | https://supabase.com/dashboard | Database admin |
-| AnythingLLM | http://pavilion-ip:3001 | Document queries |
+| AnythingLLM | http://orchestration-server-ip:3001 | Document queries |
 
 ---
 
 ## 📞 Quick Setup Checklist
 
 - [ ] Run `check-system.sh` on all machines
-- [ ] Install Node.js on HP Pavilion
-- [ ] Install Python + Whisper on HP M01-F3003W
-- [ ] Install Ollama on HP M01-F3003W
+- [ ] Install Node.js on Orchestration Server
+- [ ] Install Python + Whisper on Compute Server
+- [ ] Install Ollama on Compute Server
 - [ ] Create NFS share on NAS
 - [ ] Mount NFS on both servers
-- [ ] Run `quickstart.sh` on HP Pavilion
-- [ ] Install n8n on HP Pavilion
+- [ ] Run `quickstart.sh` on Orchestration Server
+- [ ] Install n8n on Orchestration Server
 - [ ] Configure SSH keys between machines
 - [ ] Import workflow template into n8n
 - [ ] Test with a sample file

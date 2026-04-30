@@ -164,10 +164,10 @@ Drop an audio or video file anywhere in your network. WhisperForge automatically
 
 ```
 Your Hardware Stack:
-├─ HP Pavilion (Orchestration)
+├─ Orchestration Server (Orchestration)
 │  └─ Runs: n8n, Node.js scripts, monitoring
 │
-├─ HP M01-F3003W (Compute)
+├─ Compute Server (Compute)
 │  └─ Runs: Whisper, Ollama LLM, Python processing
 │
 ├─ NAS Array (Storage)
@@ -242,17 +242,17 @@ Your Hardware Stack:
 
 ### Phase 1: Initial Setup (1-2 hours)
 1. Run `check-system.sh` on each machine
-2. Run `quickstart.sh` on HP Pavilion
+2. Run `quickstart.sh` on Orchestration Server
 3. Verify database connection
 
 ### Phase 2: Compute Setup (1-2 hours)
-1. Install Whisper on HP M01-F3003W
+1. Install Whisper on Compute Server
 2. Install Ollama and pull models
 3. Copy Python scripts
 4. Test manual transcription
 
 ### Phase 3: Automation (1 hour)
-1. Install n8n on HP Pavilion
+1. Install n8n on Orchestration Server
 2. Import workflow template
 3. Configure SSH credentials
 4. Test end-to-end

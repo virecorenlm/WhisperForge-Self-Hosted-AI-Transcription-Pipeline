@@ -15,7 +15,7 @@ This document explains what each file does and where it should be deployed.
 
 **`package.json`**
 - Node.js project configuration and dependencies
-- **Location:** Orchestration server (HP Pavilion)
+- **Location:** Orchestration server (Orchestration Server)
 
 **`.gitignore`**
 - Prevents committing sensitive files (`.env`, `node_modules`, etc.)
@@ -45,7 +45,7 @@ This document explains what each file does and where it should be deployed.
 
 ### `quickstart.sh`
 **Purpose:** Automated first-time setup wizard
-**Runs on:** HP Pavilion (orchestration server)
+**Runs on:** Orchestration Server (orchestration server)
 **What it does:**
 - Verifies dependencies (Node.js, Python, etc.)
 - Sets up `.env` file with Supabase credentials
@@ -81,7 +81,7 @@ chmod +x check-system.sh
 
 ### `db-tracker.js`
 **Purpose:** Database operations and job tracking
-**Runs on:** HP Pavilion (orchestration server)
+**Runs on:** Orchestration Server (orchestration server)
 **Dependencies:** `@supabase/supabase-js`, `dotenv`
 
 **Functions:**
@@ -109,7 +109,7 @@ const job = await tracker.createJob('test.mp3', '/tmp/test.mp3');
 
 ### `dashboard.js`
 **Purpose:** Real-time monitoring interface
-**Runs on:** HP Pavilion (orchestration server)
+**Runs on:** Orchestration Server (orchestration server)
 **Dependencies:** Same as `db-tracker.js`
 
 **Features:**
@@ -136,7 +136,7 @@ npm run dashboard
 
 ### `whisper_batch.py`
 **Purpose:** Audio/video transcription using OpenAI Whisper
-**Runs on:** HP M01-F3003W (compute server)
+**Runs on:** Compute Server (compute server)
 **Dependencies:** `openai-whisper`, `torch`, `ffmpeg`
 
 **Features:**
@@ -170,7 +170,7 @@ python3 whisper_batch.py input.mp3 output.txt medium.en --timestamps
 
 ### `llm_refine.py`
 **Purpose:** Enhance transcripts using local LLM (Ollama)
-**Runs on:** HP M01-F3003W (compute server)
+**Runs on:** Compute Server (compute server)
 **Dependencies:** `ollama` (command-line tool)
 
 **Modes:**
@@ -209,7 +209,7 @@ python3 llm_refine.py --batch /path/to/transcripts/ /path/to/output/
 
 ### `n8n-workflow-template.json`
 **Purpose:** Pre-configured n8n automation workflow
-**Import into:** n8n web interface (http://pavilion-ip:5678)
+**Import into:** n8n web interface (http://orchestration-server-ip:5678)
 
 **Workflow Steps:**
 1. **File Trigger** - Watches `/mnt/whisperforge/intake/`
@@ -288,7 +288,7 @@ crontab -e
 └── omegat-projects/     # Translation projects
 ```
 
-### On HP Pavilion (Orchestration):
+### On Orchestration Server (Orchestration):
 
 ```
 ~/whisperforge/          # This project
@@ -303,7 +303,7 @@ crontab -e
 └── README.md
 ```
 
-### On HP M01-F3003W (Compute):
+### On Compute Server (Compute):
 
 ```
 ~/scripts/
@@ -336,7 +336,7 @@ crontab -e
 ### Manual Processing:
 
 ```bash
-# On compute server (HP M01-F3003W)
+# On compute server (Compute Server)
 cd /mnt/whisperforge
 
 # Transcribe
@@ -349,7 +349,7 @@ python3 ~/scripts/llm_refine.py \
   transcripts/podcast_ep5.txt \
   refined/podcast_ep5.txt
 
-# On orchestration server (HP Pavilion)
+# On orchestration server (Orchestration Server)
 # Track manually if needed
 node db-tracker.js create-job "podcast_ep5.mp3" "/mnt/whisperforge/intake/podcast_ep5.mp3"
 ```

@@ -35,13 +35,13 @@ All of this happens **automatically**, in the background, on **your hardware**.
        └─→ /archive/      Completed files
 
 ┌─────────────────────┐
-│  HP Pavilion        │
+│  Orchestration Server        │
 │  (Orchestration)    │  ← n8n workflows
 │  16GB RAM, 2TB SSD  │     Node.js scripts
 └─────────────────────┘
 
 ┌─────────────────────┐
-│  HP M01-F3003W      │
+│  Compute Server      │
 │  (Compute)          │  ← Whisper transcription
 │  16GB RAM, 1TB NVMe │     Local LLM processing
 └─────────────────────┘
@@ -351,7 +351,7 @@ Expected speedup: **5-10x faster** than CPU.
 
 ## 📈 Performance Benchmarks
 
-### Typical Processing Times (HP M01-F3003W, medium.en model)
+### Typical Processing Times (Compute Server, medium.en model)
 
 | Audio Length | Transcription | LLM Refinement | Total |
 |--------------|---------------|----------------|-------|

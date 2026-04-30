@@ -16,12 +16,12 @@
        └──► /archive/     (Completed)
 
 ┌──────────────────┐
-│  HP Pavilion     │ ◄─── Orchestration brain
+│  Orchestration Server     │ ◄─── Orchestration brain
 │  (n8n + Node-RED)│
 └──────────────────┘
 
 ┌──────────────────┐
-│  HP M01-F3003W   │ ◄─── Heavy compute
+│  Compute Server   │ ◄─── Heavy compute
 │  (Whisper + LLM) │      (16GB RAM)
 └──────────────────┘
 
@@ -59,7 +59,7 @@ sudo exportfs -a
 sudo systemctl restart nfs-kernel-server
 ```
 
-### On Other Machines (HP Pavilion & M01-F3003W):
+### On Other Machines (Orchestration Server & Compute Server):
 
 ```bash
 # Install NFS client
@@ -75,7 +75,7 @@ echo "NAS_IP:/mnt/whisperforge /mnt/whisperforge nfs defaults 0 0" | sudo tee -a
 
 ---
 
-## 🧠 Step 2: LLM Machine Setup (HP M01-F3003W)
+## 🧠 Step 2: LLM Machine Setup (Compute Server)
 
 ### Install Whisper:
 
@@ -126,7 +126,7 @@ python3 ~/scripts/whisper_batch.py /path/to/test.mp3 /tmp/test_output.txt
 
 ---
 
-## 🎛️ Step 3: Orchestration Server Setup (HP Pavilion)
+## 🎛️ Step 3: Orchestration Server Setup (Orchestration Server)
 
 ### Install Node.js & n8n:
 
@@ -151,7 +151,7 @@ ExecStart=$(which n8n)
 Restart=on-failure
 Environment="N8N_BASIC_AUTH_ACTIVE=true"
 Environment="N8N_BASIC_AUTH_USER=admin"
-Environment="N8N_BASIC_AUTH_PASSWORD=changeme123"
+Environment="N8N_BASIC_AUTH_PASSWORD=your-secure-n8n-password"
 Environment="N8N_HOST=0.0.0.0"
 Environment="N8N_PORT=5678"
 
@@ -167,7 +167,7 @@ sudo systemctl start n8n
 # Check status
 sudo systemctl status n8n
 
-# Access at: http://pavilion-ip:5678
+# Access at: http://orchestration-server-ip:5678
 ```
 
 ### Setup Database Tracker:
@@ -186,7 +186,7 @@ node db-tracker.js stats
 
 ### Import n8n Workflow:
 
-1. Open n8n web UI (http://your-pavilion-ip:5678)
+1. Open n8n web UI (http://your-orchestration-server-ip:5678)
 2. Go to **Workflows** → **Import from File**
 3. Upload `n8n-workflow-template.json`
 4. Update these settings:
@@ -198,7 +198,7 @@ node db-tracker.js stats
 
 ## 🔐 Step 4: SSH Key Setup (Passwordless Access)
 
-On HP Pavilion (orchestration server):
+On Orchestration Server (orchestration server):
 
 ```bash
 # Generate SSH key if you don't have one
@@ -216,7 +216,7 @@ ssh user@llm-machine-ip "echo 'Connection successful'"
 ## 📊 Step 5: Database Verification
 
 ```bash
-# On HP Pavilion, test the tracker:
+# On Orchestration Server, test the tracker:
 cd ~/whisperforge
 
 # Check stats

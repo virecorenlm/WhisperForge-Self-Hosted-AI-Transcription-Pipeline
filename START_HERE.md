@@ -29,7 +29,7 @@ Run this on **each machine** to verify readiness:
 ```
 
 ### Step 2: Run Setup Wizard
-On your **HP Pavilion** (orchestration server):
+On your **Orchestration Server** (orchestration server):
 ```bash
 ./quickstart.sh
 ```
@@ -98,12 +98,12 @@ WhisperForge is designed for your specific setup:
 
 ```
 ┌─────────────────────┐
-│  HP Pavilion        │  ← Runs n8n, Node.js, monitoring
+│  Orchestration Server        │  ← Runs n8n, Node.js, monitoring
 │  16GB RAM, 2TB SSD  │     (Orchestration server)
 └─────────────────────┘
 
 ┌─────────────────────┐
-│  HP M01-F3003W      │  ← Runs Whisper, Ollama
+│  Compute Server      │  ← Runs Whisper, Ollama
 │  16GB RAM, 1TB NVMe │     (Heavy compute)
 └─────────────────────┘
 
@@ -122,13 +122,13 @@ WhisperForge is designed for your specific setup:
 
 ## 🔧 What Gets Installed Where
 
-### On HP Pavilion (Orchestration):
+### On Orchestration Server (Orchestration):
 - Node.js 20+
 - n8n workflow engine
 - This project (`~/whisperforge/`)
 - Dashboard and monitoring scripts
 
-### On HP M01-F3003W (Compute):
+### On Compute Server (Compute):
 - Python 3.8+
 - OpenAI Whisper
 - Ollama (local LLM)
@@ -286,7 +286,7 @@ npm run stats      # Check pipeline health
 
 1. ✅ Read **README.md** for overview
 2. ✅ Run `./check-system.sh` on all machines
-3. ✅ Run `./quickstart.sh` on HP Pavilion
+3. ✅ Run `./quickstart.sh` on Orchestration Server
 4. ✅ Follow **DEPLOYMENT_GUIDE.md** step-by-step
 5. ✅ Test with a sample audio file
 6. ✅ Monitor with `npm run dashboard`

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # WhisperForge Quick Start Script
-# Run this on your HP Pavilion (orchestration server)
+# Run this on your Orchestration Server (orchestration server)
 
 set -e
 
@@ -14,7 +14,7 @@ echo "╚═══════════════════════�
 echo ""
 
 # Check if running on correct machine
-read -p "Is this the HP Pavilion (orchestration server)? (y/n) " -n 1 -r
+read -p "Is this the Orchestration Server (orchestration server)? (y/n) " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo "❌ This script should run on your orchestration server."
@@ -125,7 +125,7 @@ echo "🎉 Setup complete!"
 echo ""
 echo "Next steps:"
 echo ""
-echo "1. Set up your LLM machine (HP M01-F3003W):"
+echo "1. Set up your LLM machine (Compute Server):"
 echo "   - Install Whisper: pip install openai-whisper"
 echo "   - Install Ollama: curl -fsSL https://ollama.com/install.sh | sh"
 echo "   - Pull model: ollama pull mistral:7b-instruct"
