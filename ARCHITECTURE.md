@@ -27,7 +27,7 @@
                       │ Mounted via NFS        │ Mounted via NFS
                       ▼                        ▼
 ┌───────────────────────────────┐  ┌───────────────────────────────┐
-│   HP PAVILION SERVER          │  │   HP M01-F3003W (LLM)        │
+│   HP PAVILION SERVER          │  │   Compute Server (LLM)        │
 │   (Orchestration Brain)       │  │   (Heavy Compute)            │
 │   16GB RAM, 2TB SATA SSD      │  │   16GB RAM, 1TB NVMe SSD     │
 │   Ubuntu Server               │  │   Ubuntu Desktop             │
@@ -107,7 +107,7 @@
          ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  5. TRANSCRIPTION (SSH → whisper_batch.py)                  │
-│  - SSH to HP M01-F3003W                                     │
+│  - SSH to Compute Server                                     │
 │  - Load Whisper model (medium.en)                           │
 │  - Process: /processing/meeting.mp4                         │
 │  - Output: /transcripts/meeting.txt + meeting.json          │
@@ -125,7 +125,7 @@
          ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  7. LLM REFINEMENT (SSH → llm_refine.py)                    │
-│  - SSH to HP M01-F3003W                                     │
+│  - SSH to Compute Server                                     │
 │  - Load Ollama (mistral:7b-instruct)                        │
 │  - Process: /transcripts/meeting.txt                        │
 │  - Fix grammar, remove fillers, add paragraphs              │
@@ -175,7 +175,7 @@
 |-----------|----------|----------|---------|
 | **n8n** | NAS | NFS mount | Read/write files |
 | **n8n** | db-tracker.js | Local exec | Database operations |
-| **n8n** | HP M01-F3003W | SSH | Remote command execution |
+| **n8n** | Compute Server | SSH | Remote command execution |
 | **db-tracker.js** | Supabase | HTTPS/REST | Job tracking |
 | **dashboard.js** | Supabase | HTTPS/REST | Statistics display |
 | **whisper_batch.py** | NAS | NFS mount | Read audio, write transcripts |
@@ -188,13 +188,13 @@
 ## Scalability Paths
 
 ### Current Capacity
-- **1 machine** (HP M01-F3003W) processing
+- **1 machine** (Compute Server) processing
 - **Sequential processing** (one job at a time)
 - **Throughput:** ~30 hours of audio per day
 
 ### Scale Option 1: Add More Compute
 ```
-Add 2nd HP M01-F3003W → 2x throughput (60 hours/day)
+Add 2nd Compute Server → 2x throughput (60 hours/day)
 - n8n can round-robin SSH commands
 - Shared NAS storage
 - Same database
@@ -202,7 +202,7 @@ Add 2nd HP M01-F3003W → 2x throughput (60 hours/day)
 
 ### Scale Option 2: GPU Acceleration
 ```
-Add NVIDIA GPU to HP M01-F3003W → 5-10x faster
+Add NVIDIA GPU to Compute Server → 5-10x faster
 - Whisper uses CUDA automatically
 - Same code, no changes needed
 - 150-300 hours/day throughput
@@ -226,8 +226,8 @@ Load balance via n8n
 Internet ─→ Router/Firewall
               │
               ├─→ [NAS] Private network only
-              ├─→ [HP Pavilion] Private + Supabase outbound
-              └─→ [HP M01-F3003W] Private only
+              ├─→ [Orchestration Server] Private + Supabase outbound
+              └─→ [Compute Server] Private only
 ```
 
 ### Data Security
@@ -241,7 +241,7 @@ Internet ─→ Router/Firewall
 ```
 User → NAS intake folder (write-only)
 n8n → NAS all folders (read/write)
-n8n → HP M01-F3003W (SSH key, limited user)
+n8n → Compute Server (SSH key, limited user)
 Node.js → Supabase (API key, RLS enforced)
 ```
 
@@ -352,10 +352,10 @@ System: /var/log/syslog
 
 | Phase | Machine | CPU | RAM | Duration |
 |-------|---------|-----|-----|----------|
-| Detection | HP Pavilion | <1% | 50MB | <1s |
-| Transcription | HP M01-F3003W | 100% | 5GB | 5-20min |
-| Refinement | HP M01-F3003W | 100% | 8GB | 2-4min |
-| Database Ops | HP Pavilion | <1% | 100MB | <1s |
+| Detection | Orchestration Server | <1% | 50MB | <1s |
+| Transcription | Compute Server | 100% | 5GB | 5-20min |
+| Refinement | Compute Server | 100% | 8GB | 2-4min |
+| Database Ops | Orchestration Server | <1% | 100MB | <1s |
 
 ### Bottlenecks
 1. **Whisper transcription** (slowest step)
@@ -389,13 +389,13 @@ NAS failure:
   → Remount on all machines
   → Resume processing
 
-HP Pavilion failure:
+Orchestration Server failure:
   → Reinstall Ubuntu
   → Run quickstart.sh
   → Import n8n workflow
   → Resume processing (jobs tracked in DB)
 
-HP M01-F3003W failure:
+Compute Server failure:
   → Reinstall Ubuntu
   → Install Whisper + Ollama
   → Copy scripts
@@ -431,4 +431,4 @@ Database failure:
 
 This architecture is designed to be simple, reliable, and scalable while maintaining complete control over your data and processing.
 
-Built for your specific hardware stack: HP Pavilion + HP M01-F3003W + NAS Array.
+Built for your specific hardware stack: Orchestration Server + Compute Server + NAS Array.
